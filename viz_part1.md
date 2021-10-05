@@ -16,6 +16,16 @@ library(tidyverse)
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
+``` r
+library(ggridges)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+```
+
 Load in a dataset that we’ll use often.
 
 ``` r
@@ -70,7 +80,7 @@ tmax vs tmin
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_part1_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-3-1.png" width="90%" />
 
 you can save ggplots
 
@@ -85,7 +95,7 @@ ggp_tmax_tmin
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_part1_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-4-1.png" width="90%" />
 
 ## Let’s fancy it up
 
@@ -105,4 +115,126 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_part1_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-5-1.png" width="90%" />
+
+Let’s make one more scatterplot.
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, size = prcp)) +
+  geom_point(alpha = .3) +
+  facet_grid(. ~ name) + 
+  geom_smooth(se = FALSE)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_smooth).
+
+    ## Warning: Removed 3 rows containing missing values (geom_point).
+
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-6-1.png" width="90%" />
+
+## Use data manipulation as part of this
+
+``` r
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  mutate(
+    tmax = tmax * (9/5) + 32,
+    tmin = tmin * (9/5) + 32
+  ) %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point()
+```
+
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-7-1.png" width="90%" />
+
+## Stacking geoms
+
+Which geoms do you want?
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax)) +
+  geom_bin_2d()
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_bin2d).
+
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-8-1.png" width="90%" />
+
+## Univariate plots
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, fill = name)) +
+  geom_histogram() +
+  facet_grid(. ~ name)
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_bin).
+
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-9-1.png" width="90%" />
+
+Let’s try some other plots…
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, fill = name)) +
+  geom_density(alpha = .3)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density).
+
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-10-1.png" width="90%" />
+
+Still with `tmax` and `name`
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_boxplot).
+
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-11-1.png" width="90%" />
+
+What about ridges…
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, y = name)) +
+  geom_density_ridges(alpha = .8, scale = .8)
+```
+
+    ## Picking joint bandwidth of 1.84
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density_ridges).
+
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-12-1.png" width="90%" />
+
+## Embedding plots
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .3)
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-13-1.png" width="90%" />
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .3)
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+<img src="viz_part1_files/figure-gfm/unnamed-chunk-14-1.png" width="90%" />
